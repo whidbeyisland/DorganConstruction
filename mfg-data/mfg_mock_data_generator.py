@@ -1,7 +1,8 @@
 import pandas as pd
 import numpy as np
+import random
 
-import mfg_data_formats as mdf
+from mfg_data_formats import fmt_00001_columns
 
 df = pd.read_csv("continuous_factory_process.csv")
 
@@ -12,5 +13,16 @@ df = pd.read_csv("continuous_factory_process.csv")
 #         pass
 
 # Create DataFrame containing every column in mfg_data_formats
-print(mdf.fmt_00001_columns.keys())
-df = pd.DataFrame(columns = mdf.fmt_00001_columns.keys())
+columns = fmt_00001_columns.keys()
+df = pd.DataFrame(columns = columns)
+
+for i in range(0, 5):
+    row = []
+    for col in columns:
+        min = fmt_00001_columns[col][0]
+        max = fmt_00001_columns[col][1]
+        val = round(random.uniform(min, max), 8)
+        row.append(val)
+    row_df = pd.DataFrame([row], columns=columns)
+    df = pd.concat([df, row_df], ignore_index=True)
+df.to_csv('test.csv', sep=',', encoding='utf-8')
