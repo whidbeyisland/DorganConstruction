@@ -14,9 +14,9 @@ from mfg_data_formats import device_ids, formats_dict
 #     except:
 #         pass
 
-format = 'format00001'
-num_rows = 10
-num_files = 10
+format = 'format00002'
+num_rows = 5
+num_files = 20
 
 # Create DataFrame containing every column in mfg_data_formats
 sub_dict = formats_dict[format]
