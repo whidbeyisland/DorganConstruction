@@ -14,9 +14,9 @@ from mfg_data_formats import device_ids, formats_dict
 #     except:
 #         pass
 
-format = 'format00002'
-num_rows = 5
-num_files = 20
+format = 'format00001'
+num_rows = 10
+num_files = 5
 
 # Create DataFrame containing every column in mfg_data_formats
 sub_dict = formats_dict[format]
@@ -55,4 +55,4 @@ for i in range(0, num_files):
         df = pd.concat([df, row_df], ignore_index=True)
     
     file_name = '%s_%s_%d.csv' % (device_id, format, random.randint(10000000, 99999999))
-    df.to_csv(file_name, sep=',', encoding='utf-8')
+    df.to_csv(file_name, sep=',', encoding='utf-8', index=False)

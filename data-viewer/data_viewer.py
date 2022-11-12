@@ -29,8 +29,17 @@ for file in files:
     if file.endswith('.csv'):
         if file.split('_')[0] in device_list:
             csvs_to_read.append(file)
-print(csvs_to_read)
-print(len(csvs_to_read))
+
+# for each CSV: concatenate it with the previous one
+df = None
+for csv in csvs_to_read:
+    _df = pd.read_csv(os.path.join(path_mfgdata, csv))
+    if df is not None:
+        df = pd.concat([df, _df], ignore_index=True)
+    else:
+        df = _df.copy(deep=True)
+
+df.to_csv('my_test_csv.csv', sep=',', encoding='utf-8', index=False)
 
 time.sleep(50000)
 
