@@ -1,10 +1,11 @@
 import sys
 import pandas as pd
-from PyQt5.QtWidgets import QApplication, QMainWindow, QTableView, QComboBox, QWidget, QVBoxLayout, QPushButton
+from PyQt5.QtWidgets import QApplication, QMainWindow, QTableView, QComboBox, QWidget, QVBoxLayout, QPushButton, QFileDialog
 from PyQt5.QtCore import QAbstractTableModel, Qt
 from PyQt5.QtGui import QIcon
 import os
 import time
+from datetime import datetime
 from pandas_model import pandasModel
 
 # get path where all device output CSVs are stored
@@ -14,7 +15,6 @@ device_df = pd.read_csv(os.path.join(path_mfgdata, 'device_id_customer_id.csv'),
 class Window(QMainWindow):
     """
     Function to generate a DataFrame, filtered via the filters the user chooses
-
     Parameters:
     - customers: a list of customer IDs
     """
@@ -43,6 +43,11 @@ class Window(QMainWindow):
 
         return df
     
+    def save_csv(self):
+        default_name = str(datetime.now()).replace(':', '').replace('.', '') + '.csv'
+        name = QFileDialog.getSaveFileName(self, 'Save File', default_name, 'Comma-Separated Values (*.csv)')
+        self.df.to_csv(name[0])
+    
     def __init__(self):
         super().__init__()
   
@@ -60,11 +65,17 @@ class Window(QMainWindow):
     
     def update_table(self):
         selected_customer = self.combobox.currentText()
-        df = self.get_updated_df([selected_customer])
-        model = pandasModel(df)
+        self.df = self.get_updated_df([selected_customer])
+        model = pandasModel(self.df)
         self.table_view.setModel(model)
         self.table_view.resize(800, 600)
         self.table_view.show()
+
+        # update save button
+        self.save_button = QPushButton('Save CSV', self)
+        self.save_button.pressed.connect(self.save_csv)
+        self.save_button.setGeometry(50, 200, 100, 50)
+        self.save_button.show()
     
     def UiComponents(self):
         # retrieve a list of all customer IDs
@@ -75,10 +86,10 @@ class Window(QMainWindow):
             self.combobox.addItem(customer)
         self.combobox.setGeometry(50, 50, 200, 50)
         
-        self.button = QPushButton('Load records', self)
+        self.load_button = QPushButton('Load records', self)
         # adding action to button
-        self.button.pressed.connect(self.update_table)
-        self.button.setGeometry(50, 125, 100, 50)
+        self.load_button.pressed.connect(self.update_table)
+        self.load_button.setGeometry(50, 125, 100, 50)
 
         self.table_view = QTableView()
 

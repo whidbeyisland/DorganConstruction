@@ -1,2 +1,4 @@
 /data-viewer/*.csv
 /mfg-data/*.csv
+/data-viewer/__pycache__
+/mfg-data/__pycache__
