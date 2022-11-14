@@ -22,7 +22,7 @@ class Window(QMainWindow):
         # setting geometry
         self.setGeometry(100, 100, 1000, 850)
   
-        # calling method
+        # initialize widgets
         self.UiComponents()
   
         # showing all the widgets
@@ -58,10 +58,21 @@ class Window(QMainWindow):
 
         return df
     
-    def save_csv(self):
-        default_name = str(datetime.now()).replace(':', '').replace('.', '') + '.csv'
-        name = QFileDialog.getSaveFileName(self, 'Save File', default_name, 'Comma-Separated Values (*.csv)')
-        self.df.to_csv(name[0])
+    def export_df(self):
+        # different behavior depending on whether "CSV" radio button or "Excel" radio button is checked
+        if self.r0.isChecked():
+            default_name = str(datetime.now()).replace(':', '').replace('.', '') + '.csv'
+            name = QFileDialog.getSaveFileName(self, 'Save File', default_name, 'Comma-Separated Values (*.csv)')
+            self.df.to_csv(name[0])
+        else:
+            default_name = str(datetime.now()).replace(':', '').replace('.', '') + '.xlsx'
+            name = QFileDialog.getSaveFileName(self, 'Save File', default_name, 'Excel Workbook (*.xlsx)')
+
+            # split into sheets with the number of rows that have been entered in the number field
+            num_rows = int(self.num_rows_input.text())
+            print(num_rows)
+
+            # self.df.to_csv(name[0])
     
     def update_table(self):
         selected_customer = self.combobox.currentText()
@@ -99,8 +110,8 @@ class Window(QMainWindow):
         self.load_button.setGeometry(50, 125, 100, 50)
 
         # button to save CSV - grayed out at first
-        self.save_button = QPushButton('Save CSV', self)
-        self.save_button.pressed.connect(self.save_csv)
+        self.save_button = QPushButton('Export', self)
+        self.save_button.pressed.connect(self.export_df)
         self.save_button.setGeometry(175, 125, 100, 50)
         self.save_button.setDisabled(True)
 
