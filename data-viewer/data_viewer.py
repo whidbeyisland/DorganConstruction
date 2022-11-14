@@ -1,6 +1,6 @@
 import sys
 import pandas as pd
-from PyQt5.QtWidgets import QApplication, QMainWindow, QTableView, QComboBox, QWidget, QVBoxLayout, QPushButton, QFileDialog
+from PyQt5.QtWidgets import QApplication, QMainWindow, QTableView, QComboBox, QWidget, QVBoxLayout, QPushButton, QFileDialog, QLabel
 from PyQt5.QtCore import QAbstractTableModel, Qt
 from PyQt5.QtGui import QIcon
 import os
@@ -12,7 +12,46 @@ from pandas_model import pandasModel
 path_mfgdata = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'mfg-data'))
 device_df = pd.read_csv(os.path.join(path_mfgdata, 'device_id_customer_id.csv'), dtype=str)
 
+class OptionsWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
+  
+        # setting title
+        self.setWindowTitle('Options')
+  
+        # setting geometry
+        # self.setGeometry(100, 100, 1000, 800)
+
+        print('got here 4.5')
+  
+        # calling method
+        self.UiComponents()
+  
+        # showing all the widgets
+        self.show()
+    
+    def UiComponents(self):
+        self.label = QLabel('Hello, is it me you\'re looking for?')
+        print('got here 4.6')
+        self.setCentralWidget(self.label)
+        print('got here 4.7')
+
 class Window(QMainWindow):
+    def __init__(self):
+        super().__init__()
+  
+        # setting title
+        self.setWindowTitle('Data Viewer')
+  
+        # setting geometry
+        self.setGeometry(100, 100, 1000, 800)
+  
+        # calling method
+        self.UiComponents()
+  
+        # showing all the widgets
+        self.show()
+
     """
     Function to generate a DataFrame, filtered via the filters the user chooses
     Parameters:
@@ -43,25 +82,13 @@ class Window(QMainWindow):
 
         return df
     
+    def options_menu(self):
+        self.options_window = OptionsWindow()
+    
     def save_csv(self):
         default_name = str(datetime.now()).replace(':', '').replace('.', '') + '.csv'
         name = QFileDialog.getSaveFileName(self, 'Save File', default_name, 'Comma-Separated Values (*.csv)')
         self.df.to_csv(name[0])
-    
-    def __init__(self):
-        super().__init__()
-  
-        # setting title
-        self.setWindowTitle('Data Viewer')
-  
-        # setting geometry
-        self.setGeometry(100, 100, 1000, 800)
-  
-        # calling method
-        self.UiComponents()
-  
-        # showing all the widgets
-        self.show()
     
     def update_table(self):
         selected_customer = self.combobox.currentText()
@@ -71,10 +98,16 @@ class Window(QMainWindow):
         self.table_view.resize(800, 600)
         self.table_view.show()
 
-        # update save button
+        # create button to open Options menu
+        self.options_button = QPushButton('Options', self)
+        self.options_button.pressed.connect(self.options_menu)
+        self.options_button.setGeometry(50, 200, 100, 50)
+        self.options_button.show()
+
+        # create/update save button
         self.save_button = QPushButton('Save CSV', self)
         self.save_button.pressed.connect(self.save_csv)
-        self.save_button.setGeometry(50, 200, 100, 50)
+        self.save_button.setGeometry(175, 200, 100, 50)
         self.save_button.show()
     
     def UiComponents(self):
@@ -101,3 +134,4 @@ window = Window()
 
 # keep window open
 sys.exit(app.exec())
+# app.exec_()
