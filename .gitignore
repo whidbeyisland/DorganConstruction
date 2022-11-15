@@ -1,5 +1,6 @@
 /data-viewer/*.csv
 /data-viewer/*.xlsx
 /mfg-data/*.csv
+!/mfg-data/device_id_customer_id.csv
 /data-viewer/__pycache__
 /mfg-data/__pycache__

@@ -1,6 +1,6 @@
 import sys
 import pandas as pd
-from PyQt5.QtWidgets import QApplication, QMainWindow, QTableView, QComboBox, QWidget, QVBoxLayout, QPushButton, QFileDialog, QLabel, QLineEdit, QScrollArea, QButtonGroup, QRadioButton
+from PyQt5.QtWidgets import QApplication, QMainWindow, QTableView, QComboBox, QWidget, QVBoxLayout, QPushButton, QFileDialog, QLabel, QLineEdit, QScrollArea, QButtonGroup, QRadioButton, QMessageBox
 from PyQt5.QtCore import QAbstractTableModel, Qt
 from PyQt5.QtGui import QIcon, QIntValidator
 import os
@@ -8,6 +8,7 @@ import time
 from datetime import datetime
 from pandas_model import pandasModel
 import openpyxl
+import re
 
 # get path where all device output CSVs are stored
 path_mfgdata = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'mfg-data'))
@@ -68,18 +69,33 @@ class Window(QMainWindow):
         if self.r0.isChecked():
             default_name = str(datetime.now()).replace(':', '').replace('.', '') + '.csv'
             name = QFileDialog.getSaveFileName(self, 'Save File', default_name, 'Comma-Separated Values (*.csv)')
-            self.df.to_csv(name[0])
+
+            try:
+                self.df.to_csv(name[0])
+                QMessageBox.about(self, 'Success', 'Successfully saved file!')
+            except FileNotFoundError:
+                # we don't care about this error, it's triggered when the user clicks "Cancel" on the file save menu
+                pass
+
         else:
             default_name = str(datetime.now()).replace(':', '').replace('.', '') + '.xlsx'
             name = QFileDialog.getSaveFileName(self, 'Save File', default_name, 'Excel Workbook (*.xlsx)')
 
-            # split into sheets with the number of rows that have been entered in the number field
-            num_rows = int(self.num_rows_input.text())
-            _dfs = [self.df.loc[i : i + num_rows - 1, :] for i in range(0, len(self.df), num_rows)]
-            with pd.ExcelWriter(name[0]) as writer:
-                for (j, _df) in enumerate(_dfs):
-                    _df.to_excel(writer, sheet_name='Sheet_%06d' % (j + 1), index=False)
-    
+            try:
+                # split into sheets with the number of rows that have been entered in the number field
+                num_rows = int(self.num_rows_input.text())
+                if 1 <= num_rows <= 10000:
+                    _dfs = [self.df.loc[i : i + num_rows - 1, :] for i in range(0, len(self.df), num_rows)]
+                    with pd.ExcelWriter(name[0]) as writer:
+                        for (j, _df) in enumerate(_dfs):
+                            _df.to_excel(writer, sheet_name='Sheet_%06d' % (j + 1), index=False)
+                    QMessageBox.about(self, 'Success', 'Successfully saved file!')
+                else:
+                    QMessageBox.about(self, 'Error', 'Please enter a number of rows between 1 and 10000')
+            except FileNotFoundError:
+                # we don't care about this error, it's triggered when the user clicks "Cancel" on the file save menu
+                pass
+
     """
     Function to update "self.table_view", the view containing the current table of records
 

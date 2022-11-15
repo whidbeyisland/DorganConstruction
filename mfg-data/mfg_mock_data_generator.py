@@ -13,10 +13,10 @@ from mfg_data_formats import device_ids, formats_dict
 FORMAT = 'format00001'
 
 # number of rows of data that each sheet should contain
-NUM_ROWS = 10
+NUM_ROWS = 10000
 
 # number of sheets that should be generated
-NUM_FILES = 5
+NUM_FILES = 1
 
 # create DataFrame containing every column in mfg_data_formats
 sub_dict = formats_dict[FORMAT]
@@ -28,6 +28,8 @@ for i in range(0, NUM_FILES):
     device_id = random.choice(device_ids)
 
     for j in range(0, NUM_ROWS):
+        if j % 100 == 0:
+            print(j)
         row = []
         for col in columns:
             # fill the column with an appropriate random value depending on its type, e.g. "number", "datetime"
