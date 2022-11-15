@@ -6,28 +6,28 @@ import uuid
 
 from mfg_data_formats import device_ids, formats_dict
 
-# generate a dictionary in mfg_data_formats.py based on a sample document
-# df = pd.read_csv("continuous_factory_process.csv")
-# for col in df.columns:
-#     try:
-#         print("'%s': [%8.8f, %8.8f]," % (col, df[col].min(), df[col].max()))
-#     except:
-#         pass
+# configs
 
-format = 'format00001'
-num_rows = 10
-num_files = 5
+# selected format from the dictionary "formats_dict" within mfg_data_formats.py. a mock data sheet will be generated
+# in this format
+FORMAT = 'format00001'
 
-# Create DataFrame containing every column in mfg_data_formats
-sub_dict = formats_dict[format]
+# number of rows of data that each sheet should contain
+NUM_ROWS = 10
+
+# number of sheets that should be generated
+NUM_FILES = 5
+
+# create DataFrame containing every column in mfg_data_formats
+sub_dict = formats_dict[FORMAT]
 columns = sub_dict.keys()
 df = pd.DataFrame(columns = columns)
 
-for i in range(0, num_files):
+for i in range(0, NUM_FILES):
     # pick a random mock device ID - this CSV will belong to that device
     device_id = random.choice(device_ids)
 
-    for j in range(0, num_rows):
+    for j in range(0, NUM_ROWS):
         row = []
         for col in columns:
             # fill the column with an appropriate random value depending on its type, e.g. "number", "datetime"
@@ -54,5 +54,5 @@ for i in range(0, num_files):
         row_df = pd.DataFrame([row], columns=columns)
         df = pd.concat([df, row_df], ignore_index=True)
     
-    file_name = '%s_%s_%d.csv' % (device_id, format, random.randint(10000000, 99999999))
+    file_name = '%s_%s_%d.csv' % (device_id, FORMAT, random.randint(10000000, 99999999))
     df.to_csv(file_name, sep=',', encoding='utf-8', index=False)
