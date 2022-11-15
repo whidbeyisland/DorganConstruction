@@ -7,6 +7,7 @@ import os
 import time
 from datetime import datetime
 from pandas_model import pandasModel
+import openpyxl
 
 # get path where all device output CSVs are stored
 path_mfgdata = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'mfg-data'))
@@ -70,7 +71,8 @@ class Window(QMainWindow):
 
             # split into sheets with the number of rows that have been entered in the number field
             num_rows = int(self.num_rows_input.text())
-            print(num_rows)
+            with pd.ExcelWriter(name[0]) as writer:
+                self.df.to_excel(writer, sheet_name="001", index=False)
 
             # self.df.to_csv(name[0])
     
