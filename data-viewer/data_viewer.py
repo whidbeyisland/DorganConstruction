@@ -71,10 +71,11 @@ class Window(QMainWindow):
 
             # split into sheets with the number of rows that have been entered in the number field
             num_rows = int(self.num_rows_input.text())
+            _dfs = [self.df.loc[i : i + num_rows - 1, :] for i in range(0, len(self.df), num_rows)]
             with pd.ExcelWriter(name[0]) as writer:
-                self.df.to_excel(writer, sheet_name="001", index=False)
-
-            # self.df.to_csv(name[0])
+                for (j, _df) in enumerate(_dfs):
+                    # self.df.to_excel(writer, sheet_name="001", index=False)
+                    _df.to_excel(writer, sheet_name='Sheet_%06d' % (j + 1), index=False)
     
     def update_table(self):
         selected_customer = self.combobox.currentText()
