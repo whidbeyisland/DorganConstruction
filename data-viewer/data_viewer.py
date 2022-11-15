@@ -1,14 +1,12 @@
 import sys
 import pandas as pd
-from PyQt5.QtWidgets import QApplication, QMainWindow, QTableView, QComboBox, QWidget, QVBoxLayout, QPushButton, QFileDialog, QLabel, QLineEdit, QScrollArea, QButtonGroup, QRadioButton, QMessageBox
-from PyQt5.QtCore import QAbstractTableModel, Qt
-from PyQt5.QtGui import QIcon, QIntValidator
+from PyQt5.QtWidgets import QApplication, QMainWindow, QTableView, QComboBox, QPushButton, QFileDialog, QLabel, QLineEdit, QButtonGroup, QRadioButton, QMessageBox
+from PyQt5.QtGui import QIntValidator
 import os
 import time
 from datetime import datetime
 from pandas_model import pandasModel
 import openpyxl
-import re
 
 # get path where all device output CSVs are stored
 path_mfgdata = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'mfg-data'))
