@@ -17,16 +17,16 @@ class Window(QMainWindow):
     def __init__(self):
         super().__init__()
   
-        # setting title
+        # set title
         self.setWindowTitle('Data Viewer')
   
-        # setting geometry
+        # set geometry
         self.setGeometry(100, 100, 1000, 850)
   
         # initialize widgets
         self.UiComponents()
   
-        # showing all the widgets
+        # show all the widgets
         self.show()
 
     """
@@ -59,6 +59,10 @@ class Window(QMainWindow):
 
         return df
     
+    """
+    Function to export the window's current DataFrame (self.df), as either a CSV or an Excel
+    Parameters: None
+    """
     def export_df(self):
         # different behavior depending on whether "CSV" radio button or "Excel" radio button is checked
         if self.r0.isChecked():
@@ -74,9 +78,13 @@ class Window(QMainWindow):
             _dfs = [self.df.loc[i : i + num_rows - 1, :] for i in range(0, len(self.df), num_rows)]
             with pd.ExcelWriter(name[0]) as writer:
                 for (j, _df) in enumerate(_dfs):
-                    # self.df.to_excel(writer, sheet_name="001", index=False)
                     _df.to_excel(writer, sheet_name='Sheet_%06d' % (j + 1), index=False)
     
+    """
+    Function to update "self.table_view", the view containing the current table of records
+
+    Parameters: None
+    """
     def update_table(self):
         selected_customer = self.combobox.currentText()
         self.df = self.get_updated_df([selected_customer])
@@ -86,6 +94,12 @@ class Window(QMainWindow):
         # re-enable save button, now that table view is populated
         self.save_button.setDisabled(False)
 
+    """
+    Functions to enable or disable the options for setting how many rows should be outputted in
+    each sheet. (This only applies if the user has selected the "Excel" ratio button)
+
+    Parameters: None
+    """
     def enable_row_options(self):
         self.num_rows_label.setDisabled(False)
         self.num_rows_input.setDisabled(False)
@@ -94,6 +108,11 @@ class Window(QMainWindow):
         self.num_rows_label.setDisabled(True)
         self.num_rows_input.setDisabled(True)
     
+    """
+    Function that sets all of the window's UI componennts. Does not return anything
+
+    Parameters: None
+    """
     def UiComponents(self):
         # retrieve a list of all customer IDs
         customer_list = [str(x) for x in device_df['customer_id'].unique()]
@@ -149,10 +168,8 @@ class Window(QMainWindow):
 
         self.disable_row_options()
 
-# create pyqt5 app
+# create Pyqt5 app and the single window it uses
 app = QApplication(sys.argv)
-
-# create the instance of our Window
 window = Window()
 
 # keep window open
